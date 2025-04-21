@@ -22,10 +22,16 @@ class NotificationService {
     }
 
     async storeWebhook(webhook: Webhook): Promise<void> {
-        this.dbConnection.connect(this.MONGODB_URI);
-        const webhookModel = new Webhook(webhook);
-        await webhookModel.save();
-        await this.dbConnection.disconnect();
+        try {
+            this.dbConnection.connect(this.MONGODB_URI);
+            const webhookModel = new Webhook(webhook);
+            await webhookModel.save();
+        } catch (error) {
+            console.error('Error storing webhooks data:', error);
+            throw new Error('Failed to fetch earthquake data');
+        } finally {            
+            await this.dbConnection.disconnect();
+        }
     }
 }
 
