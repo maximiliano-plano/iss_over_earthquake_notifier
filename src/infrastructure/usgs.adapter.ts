@@ -58,6 +58,6 @@ export default function UsgsAdapterFactory() {
         console.warn('USGS_BASE_URL is not set, using default URL');
     }
 
-    const baseURL = process.env.USGS_BASE_URL ?? 'https://earthquake.usgs.gov/earthquakes';
+    const baseURL = process.env.USGS_BASE_URL ?? 'https://earthquake.usgs.gov/fdsnws/event/1';
     return new UsgsAdapter(baseURL);
 };
