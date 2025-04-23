@@ -3,11 +3,8 @@ const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-wss.on('connection', (ws) => {
+wss.on('connection', () => {
     console.log('New client connected');
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
 });
 
 const broadcast = (message) => {
@@ -40,13 +37,13 @@ async function* getEarthquakes(age, minmagnitude, issCurrentLocation, radius) {
         return;
     }
 
-    params.limit = 20000;
+    params.limit = 5000;
     params.offset = 1;
     do { 
         try {
             const res = await axios.get('https://earthquake.usgs.gov/fdsnws/event/1/query', {params});
             yield res.data.features;
-            params.offset += 20000;
+            params.offset += 5000;
         } catch (error) {
             console.log(error);
             return;
@@ -55,8 +52,13 @@ async function* getEarthquakes(age, minmagnitude, issCurrentLocation, radius) {
 }
 
 const getIssCurrentLocation = async () => {
-    const res = await axios.get('https://api.wheretheiss.at/v1/satellites/25544');
-    return res.data;
+    try {
+        const res = await axios.get('https://api.wheretheiss.at/v1/satellites/25544');
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return;
+    }
 }
 
 const notifiedEarthquakes = [];
@@ -65,12 +67,14 @@ const main = async (minmagnitude, age, radius) => {
     const issCurrentLocation = await getIssCurrentLocation();
     for await(const earthquakes of getEarthquakes(age, minmagnitude, issCurrentLocation, radius)) {      
         earthquakes
-            .filter(e => notifiedEarthquakes.indexOf(e.id) === -1) // filter out already notified earthquakes
+            .filter(e => !notifiedEarthquakes.find((n) => n.id === e.id))
             .forEach(e => {                       
                 broadcast(`ISS is over an earthquake at ${e.properties.place}`);
+                console.log(`ISS is over an earthquake at ${e.properties.place}`);
                 notifiedEarthquakes.push(e);
             });
     }
+    console.log('No more earthquakes to notify');
 }
 
 module.exports = { main, server: wss };
