@@ -6,10 +6,10 @@ const intervalInSeconds = process.env.CHECK_INTERVAL_IN_SECONCDS
     : 60;
 
 export default async function run(): Promise<void> {
-    const earthquakeService = EarthquakeServiceFactory();
+    const earthquakeService = await EarthquakeServiceFactory();
     
     while (true) {
-      const earthquakes = await earthquakeService.getEarthquakes({minmumMagnitude: 5});
+      const earthquakes = await earthquakeService.getAndInsertEarthquakes({minmumMagnitude: 5});
       const issCurrentLocation = await issService.getCurrentLocation();
       const issOverEarthquake = await issService.isOverEarthquake(earthquakes, issCurrentLocation);
       if(issOverEarthquake) {

@@ -1,6 +1,7 @@
 import axios from 'axios';
-import EarthquakeAdapter, { QueryParams } from '../core/earthquake/earthquake_adapter.abstract'
+import EarthquakeProvider from '../core/earthquake/earthquake.provider'
 import { Earthquake } from '../core/earthquake/earthquake.interface';
+import { QueryParams } from '../core/earthquake/earthquake.service';
 
 interface FeatureCollection {
     features: {
@@ -16,7 +17,7 @@ interface FeatureCollection {
     }[]
 }
 
-export class UsgsAdapter implements EarthquakeAdapter {
+export class UsgsEarthquakeProvider implements EarthquakeProvider {
     private readonly apiClient: Axios.AxiosInstance;
 
     constructor(baseURL: string) {
@@ -26,7 +27,7 @@ export class UsgsAdapter implements EarthquakeAdapter {
         });
     }
 
-    async getEarthquakes(params: QueryParams): Promise<Earthquake[]> {
+    async fetchEarthquakes(params: QueryParams): Promise<Earthquake[]> {
         try {
             const { data } = await this.apiClient.get<FeatureCollection>('/query', {
                     params: this.mapQueryParams(params)
@@ -49,15 +50,19 @@ export class UsgsAdapter implements EarthquakeAdapter {
             starttime: params.startTime?.toISOString().slice(0, 10),
             endtime: params.endTime?.toISOString().slice(0, 10),
             minmagnitude: params.minmumMagnitude,
+            maxradius: params.maximumRadius,
+            latitude: params.center?.latitude,
+            longitude: params.center?.longitude,
+            limit: params.limit
         }
     }
 }
 
-export default function UsgsAdapterFactory() {
+export default function UsgsEarthquakeProviderFactory() {
     if (!process.env.USGS_BASE_URL) {
         console.warn('USGS_BASE_URL is not set, using default URL');
     }
 
-    const baseURL = process.env.USGS_BASE_URL ?? 'https://earthquake.usgs.gov/earthquakes';
-    return new UsgsAdapter(baseURL);
+    const baseURL = process.env.USGS_BASE_URL ?? 'https://earthquake.usgs.gov/fdsnws/event/1';
+    return new UsgsEarthquakeProvider(baseURL);
 };

@@ -1,45 +1,56 @@
 
-import {EarthquakeService} from "./earthquake.service";
-import EarthquakeAdapter from "./earthquake_adapter.abstract";
-
-class MockEarthquakeAdapter extends EarthquakeAdapter {
-    getEarthquakes = jest.fn().mockResolvedValue([{ 
-        magnitude: 6.5, 
-        place: '32 km W of Sola, Vanuatu', 
-        time: new Date(1388592209000), 
-        coordinates: [ 167.249, -13.8633, 187 ] 
-    }]);
-}
-
+import { EarthquakeService } from "./earthquake.service";
+import { MongoEarthquakeRepository } from "../../infrastructure/mongo.earthquake_repository";
+import { UsgsEarthquakeProvider } from "../../infrastructure/usgs.earthquake_provider";
+import { connect } from "mongoose";
 
 describe('EarthquakeService', () => {
     let earthquakeService: EarthquakeService;
 
-    beforeAll(() => {
-        const mockEarthquakeAdapter = new MockEarthquakeAdapter();
+    beforeAll(async () => {
+        const usgsEarthquakeProvider = new UsgsEarthquakeProvider('https://earthquake.usgs.gov/fdsnws/event/1');
+        const connection = await connect('mongodb://localhost:27017/iss_over_earthquakes_db', {
+            bufferCommands: false,
+            autoCreate: false,
+        });
+        const mongoEarthquakeRepository = new MongoEarthquakeRepository(connection);
+        const minimumAge = process.env.MINIMUM_AGE_IN_SEC
+            ? parseInt(process.env.MINIMUM_AGE_IN_SEC)
+            : 5;
 
-        earthquakeService = new EarthquakeService(mockEarthquakeAdapter);
+        earthquakeService = new EarthquakeService(usgsEarthquakeProvider, mongoEarthquakeRepository, minimumAge);
     });
 
-    describe('getEarthquakes', () => {
-        it('should return an array of earthquakes', async () => {
-            const result = await earthquakeService.getEarthquakes({minmumMagnitude: 6.5});
+    describe('getAndInsertEarthquakes', () => {
+        it('should retrieve earthquakes when are inside of center radius', async () => {
 
-            expect(result).toEqual([{
-                magnitude: 6.5,
-                place: '32 km W of Sola, Vanuatu',
-                time: new Date(1388592209000),
-                coordinates: [167.249, -13.8633, 187]
-            }]);
         });
 
-        it('should call the earthquake adapter with the correct parameters', async () => {
-            const mockEarthquakeAdapter = earthquakeService['earthquakeAdapter'] as MockEarthquakeAdapter;
-            const params = { minmumMagnitude: 6.5 };
+        it('should filter out earthquakes when are below minimum magnitude', async () => {
 
-            await earthquakeService.getEarthquakes(params);
-
-            expect(mockEarthquakeAdapter.getEarthquakes).toHaveBeenCalledWith(params);
         });
+
+        it('should filter out earthquakes when are earlier than minimum age', async () => {
+
+        });
+
+        it('should add earthquakes in the database', async () => {
+
+        });
+
+        it('should not duplicate earthquakes in the database', async () => {
+
+        });
+
+        it('should limit the number of earthquakes returned', async () => {
+
+        });
+
+        it('should handle errors when fetching earthquake data', async () => {
+        });
+
+        it('should handle errors when saving earthquake data', async () => {
+        });
+
     });
 });
