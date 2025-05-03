@@ -1,13 +1,23 @@
+<h3> Description </h3>
 
-** Requirements
-* The Earthquake Catalog API provides detailed information about all registered earthquakes world wide. See https://earthquake.usgs.gov/fdsnws/event/1/
-* The WhereIsTheISS API provides the current location of the ISS Space station. See https://wheretheiss.at/w/developer
-* Design a system which main purpose is to provide realtime warnings whenever the ISS is flying over an area which has been hit by an earthquake. Ensure the area can be specified as a maximum distance from the middle point of the earthquake. Also ensure the minimum magnitude of an earthquake can be specified. As well as the minimum age of the earthquake. Given these parameters, clients should be able to subscribe to the warning system and get notified by for example a web hook or through a web socket.
-* Build a proof of concept to showcase how such a system could work. Ensure the POC can run on any machine without any prerequisites. Don't try to build the complete system, focus on the parts which are most significant.
+This project is a solution to <i> FullInfo </i> technical assignment. It consists of an API that notifies client webhooks whenever the ISS is over an earthquake.
 
-** Assumtions 
-* Age, minimum magnitud and minimum age
-* Since we are trying to provide realtime warnings age of the earthquake is express in 'hours'. Considering that earthquakes older than, for example an hour, are not relevant in our search.
+The API, built with TypeScript and Express.js, utilizes a background process that runs continuously on a loop. During each iteration, the background process checks the current location of the International Space Station (ISS) and the locations of recent earthquakes.
+When the ISS's location overlaps with that of an earthquake, a notification is sent to all registered client webhook URLs.
 
-* Get Earthquakes, 
-Let's suppouse our implementation requires that every client that connects to our service wants to determine the age, magnitud and distance of the earthquakes it wants to be notify, to do so we should consider every earthquake in history and  
+This allows client applications to receive real-time alerts about potential correlations between space activity and seismic events
+
+![notification_loop](./notification_loop.jpg)
+*Diagram illustrating the notification process.*
+
+Earthquakes are not fetched directly from USGS's API, rather they are queried from a mongo database that's been kept updated with USGS's latest earthquakes.
+
+Once the notifications have been sent, earthquakes are updated to mark that they have already been notified.
+
+<h3> ISS Tracking Service </h3>
+
+This service is a RESTful API client that interacts with the [ISS API](https://api.wheretheiss.at/v1/satellites/25544) to retrieve the ISS's current location. 
+
+To handle potential temporary issues with the ISS API, a retry mechanism is implemented. However, if the ISS API remains unavailable after all retry attempts, the service will not be able to retrieve the ISS location, and the main notification loop will need to handle this scenario.
+
+The retry logic is configured to wait for a specific duration between attempts. After exhausting all configured retry attempts without a successful response from the ISS API, the service will return an undefined result.
