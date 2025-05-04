@@ -2,24 +2,24 @@
 import { Earthquake } from "./earthquake.interface";
 import EarthquakeProvider from "./earthquake.provider";
 import EarthquakeRepository from "./earthquake.repository";
-import UsgsEarthquakeProviderFactory from "../../infrastructure/usgs.earthquake_provider";
-import MongoEarthquakeRepositoryFactory from "../../infrastructure/mongo.earthquake_repository";
+import UsgsEarthquakeProviderFactory from "../../infrastructure/earthquake/rest_usgs_earthquake.provider";
+import MongoEarthquakeRepositoryFactory from "../../infrastructure/earthquake/mongo.earthquake_repository";
 
 export interface QueryParams {
     startTime: Date,
     endTime: Date,
     minmumMagnitude: number,
     limit: number,
-    maximumRadius: number,
+    maximumRadiusInKm: number,
     center: {
         latitude: number,
         longitude: number
     },
 }
 
-export class EarthquakeService {    
-    constructor(private readonly earthquakeProvider: EarthquakeProvider, 
-        private readonly earthquakeRepository: EarthquakeRepository, 
+export class EarthquakeService {
+    constructor(private readonly earthquakeProvider: EarthquakeProvider,
+        private readonly earthquakeRepository: EarthquakeRepository,
         private readonly minimumAge: number) {
     }
 
@@ -30,16 +30,26 @@ export class EarthquakeService {
      * 
      * @param params Query parameters to filter earthquakes.
      */
-    async getAndInsertEarthquakes(params: QueryParams): Promise<Earthquake[]> {
-        throw new Error('Method not implemented.');
+    async getEarthquakes(params: QueryParams): Promise<Earthquake[]> {
+        return this.earthquakeRepository.get(params);
+    }
+
+    /**
+     * It pulls last earthquakes from provider and stores it on the repository.
+     */
+    async fetchAndInsertEarthquakes(): Promise<void> {
+        const lastEarthquakes = await this.earthquakeProvider.fetchLastEarthquakes();
+        await Promise.all(lastEarthquakes.map(e =>
+            this.earthquakeRepository.atomicUpsert(e, { external_id: e.external_id })
+        ));
     }
 }
 
 export default async function EarthquakeServiceFactory() {
     const usgsProvider = UsgsEarthquakeProviderFactory();
     const mongoRepository = await MongoEarthquakeRepositoryFactory();
-    const minimumAge = process.env.MINIMUM_AGE_IN_SEC 
-        ? parseInt(process.env.MINIMUM_AGE_IN_SEC) 
+    const minimumAge = process.env.MINIMUM_AGE_IN_SEC
+        ? parseInt(process.env.MINIMUM_AGE_IN_SEC)
         : 5;
 
     return new EarthquakeService(usgsProvider, mongoRepository, minimumAge);

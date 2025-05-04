@@ -1,0 +1,101 @@
+{
+    "type": "FeatureCollection",
+    "metadata": {
+        "generated": 1746308863000,
+        "url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2025-05-03%2021:00:01",
+        "title": "USGS Earthquakes",
+        "status": 200,
+        "api": "1.14.1",
+        "count": 2
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "mag": 0.72,
+                "place": "5 km WNW of Cobb, CA",
+                "time": 1746308703430,
+                "updated": 1746308798398,
+                "tz": null,
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/nc75176096",
+                "detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=nc75176096&format=geojson",
+                "felt": null,
+                "cdi": null,
+                "mmi": null,
+                "alert": null,
+                "status": "automatic",
+                "tsunami": 0,
+                "sig": 8,
+                "net": "nc",
+                "code": "75176096",
+                "ids": ",nc75176096,",
+                "sources": ",nc,",
+                "types": ",nearby-cities,origin,phase-data,",
+                "nst": 9,
+                "dmin": 0.00621,
+                "rms": 0.04,
+                "gap": 75,
+                "magType": "md",
+                "type": "earthquake",
+                "title": "M 0.7 - 5 km WNW of Cobb, CA"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.783836364746,
+                    38.8348350524902,
+                    2.9300000667572
+                ]
+            },
+            "id": "nc75176096"
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "mag": 1.7,
+                "place": "50 km SSW of Cantwell, Alaska",
+                "time": 1746307648616,
+                "updated": 1746307759382,
+                "tz": null,
+                "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ak0255nrrmzh",
+                "detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=ak0255nrrmzh&format=geojson",
+                "felt": null,
+                "cdi": null,
+                "mmi": null,
+                "alert": null,
+                "status": "automatic",
+                "tsunami": 0,
+                "sig": 44,
+                "net": "ak",
+                "code": "0255nrrmzh",
+                "ids": ",ak0255nrrmzh,",
+                "sources": ",ak,",
+                "types": ",origin,phase-data,",
+                "nst": null,
+                "dmin": null,
+                "rms": 0.59,
+                "gap": null,
+                "magType": "ml",
+                "type": "earthquake",
+                "title": "M 1.7 - 50 km SSW of Cantwell, Alaska"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -149.3607,
+                    62.9757,
+                    69.3
+                ]
+            },
+            "id": "ak0255nrrmzh"
+        }
+    ],
+    "bbox": [
+        -149.3607,
+        38.83483505249,
+        2.9300000667572,
+        -122.78383636475,
+        62.9757,
+        69.3
+    ]
+}

@@ -7,12 +7,14 @@ export default abstract class EarthquakeRepository {
      * 
      * @param params Query parameters to filter earthquakes.
      */
-    abstract getEarthquakes(params: QueryParams): Promise<Earthquake[]>;
+    abstract get(params: QueryParams): Promise<Earthquake[]>;
     
     /**
-     * Saves a list of earthquakes to the repository.
+     * Upserts an earthquake based on filter criteria.
      * 
-     * @param earthquakes List of earthquakes to save.
+     * @param earthquake stored earthquake.
+     * @param filter matching fields to filter earthquakes out.
+     * @returns updated earthquake.
      */
-    abstract saveEarthquakes(earthquakes: Earthquake[]): Promise<void>;
+    abstract atomicUpsert(earthquake: Earthquake, filter?: Partial<Earthquake>): Promise<Earthquake>;
 }

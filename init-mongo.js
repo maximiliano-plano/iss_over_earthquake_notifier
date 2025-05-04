@@ -1,0 +1,1 @@
+db.earthquakes.createIndex({ location: "2dsphere" });

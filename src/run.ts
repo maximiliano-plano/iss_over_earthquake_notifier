@@ -1,26 +1,30 @@
+/*import { Earthquake } from './core/earthquake/earthquake.interface';
 import EarthquakeServiceFactory from './core/earthquake/earthquake.service';
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-const intervalInSeconds = process.env.CHECK_INTERVAL_IN_SECONCDS 
-    ? parseInt(process.env.CHECK_INTERVAL_IN_SECONCDS)
-    : 60;
+import IssTrackingServiceFactory from './core/iss_tracking/iss_tracking.service';
+import NotificationServiceFactory from './core/notification.service';
 
 export default async function run(): Promise<void> {
     const earthquakeService = await EarthquakeServiceFactory();
+    const issTrackingService = await IssTrackingServiceFactory();
+    const notificationService = await NotificationServiceFactory();
     
     while (true) {
-      const earthquakes = await earthquakeService.getAndInsertEarthquakes({minmumMagnitude: 5});
-      const issCurrentLocation = await issService.getCurrentLocation();
-      const issOverEarthquake = await issService.isOverEarthquake(earthquakes, issCurrentLocation);
-      if(issOverEarthquake) {
-        const hasNotificationBeenSent = await notificationService.getNotification(issOverEarthquake);
-        if(hasNotificationBeenSent) {
-          await notificationService.notifyAll();
-          notificationService.storeNotification(issOverEarthquake);
-          console.log('Notification sent!');
-        }
-      }
-      sleep(intervalInSeconds * 1000);
+      const issCurrentLocation = await issTrackingService.getCurrentLocation();
+      
+      const earthquakes: Earthquake[] = await earthquakeService.getEarthquakes({
+        startTime: process.env.,
+        endTime: process.env,
+        minmumMagnitude: process.env.,
+        limit: process.env.,
+        maximumRadius: process.env.,
+        center: issCurrentLocation
+      });
+
+      await Promise.all(earthquakes.map(async (earthquake) => {
+        await notificationService.notifyEverybody(earthquake);
+        await earthquakeService.saveEarthquake({ ...earthquake, notification_sent: true });
+        console.log('Notification sent!');
+      }));
     }
 }
-
+*/
