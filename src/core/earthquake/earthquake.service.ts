@@ -35,7 +35,7 @@ export class EarthquakeService {
     }
 
     /**
-     * It pulls last earthquakes from provider and stores it on the repository.
+     * It pulls last earthquakes from provider and stores them in the repository.
      */
     async fetchAndInsertEarthquakes(): Promise<void> {
         const lastEarthquakes = await this.earthquakeProvider.fetchLastEarthquakes();
