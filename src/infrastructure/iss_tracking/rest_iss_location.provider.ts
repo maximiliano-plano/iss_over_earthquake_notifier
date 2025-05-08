@@ -1,6 +1,7 @@
 import { IssLocationProvider } from '../../core/iss_tracking/iss_location.provider';
 import {Location} from '../../core/iss_tracking/iss_tracking.service'
 import axios from 'axios';
+import { getEnvarOrThrow } from '../../util';
 
 export class RestIssLocationProvider implements IssLocationProvider {
     private readonly apiClient: Axios.AxiosInstance;
@@ -27,10 +28,7 @@ export class RestIssLocationProvider implements IssLocationProvider {
 }
 
 export default function RestIssLocationProviderFactory() {
-    const baseUrl = process.env.ISS_LOCATION_API_URL;
-    if (!baseUrl) {
-        throw new Error('ISS_LOCATION_API_URL environment variable is not set');
-    }    
+    const baseUrl = getEnvarOrThrow<string>('ISS_LOCATION_API_URL');
 
     return new RestIssLocationProvider(baseUrl);
 }

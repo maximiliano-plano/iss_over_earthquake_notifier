@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { notificationService } from '../core/notification.service';
-const NotificationService = notificationService();
+import NotificationServiceFactory, {NotificationService} from '../core/notification/notification.service';
 
 export const storeWebhook = async (req:Request, res:Response, next: NextFunction): Promise<void> => {
     const { url, method } = req.body;
@@ -12,9 +11,9 @@ export const storeWebhook = async (req:Request, res:Response, next: NextFunction
     }
 
     try {
-        const notificationService = await NotificationService;
-        await notificationService.storeWebhook({ url, method });
-        res.status(200).json({ url, method });
+        const notificationService: NotificationService = await NotificationServiceFactory();
+        await notificationService.storeWebhook({ url });
+        res.status(200).json({ url });
     } catch (error) {
         console.error('Error storing webhook:', error);
         res.status(500).json({ error: 'Internal Server Error' });

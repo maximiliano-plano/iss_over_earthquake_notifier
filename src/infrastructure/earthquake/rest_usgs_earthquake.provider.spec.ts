@@ -1,6 +1,6 @@
 const mockAxios = {
     get: jest.fn().mockResolvedValue(Promise.resolve({
-        data: require('../../tests/resources/fetch_earthquakes.response.json')
+        data: require('../../../test/resources/fetch_earthquakes.response.json')
     }))
 }
 jest.mock('axios', () => ({

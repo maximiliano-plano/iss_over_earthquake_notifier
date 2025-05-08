@@ -1,6 +1,6 @@
 const mockAxios = {
     get: jest.fn().mockResolvedValue(Promise.resolve({
-        data: require('../../tests/resources/fetch_earthquakes.response.json')
+        data: require('../../../test/resources/fetch_earthquakes.response.json')
     }))
 }
 
@@ -29,7 +29,7 @@ describe('EarthquakeService', () => {
         earthquakeCollection = connection.collection("earthquakes");
         await earthquakeCollection.deleteMany();
 
-        earthquakeService = new EarthquakeService(MockUsgsEarthquakeProvider, mongoEarthquakeRepository, 1);
+        earthquakeService = new EarthquakeService(MockUsgsEarthquakeProvider, mongoEarthquakeRepository);
     });
 
     afterAll(async () => {

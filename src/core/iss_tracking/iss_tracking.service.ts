@@ -20,7 +20,7 @@ export class IssTrackingService {
      * @returns {Location?} current location of the iss
      */
     async getCurrentLocation(): Promise<Location | undefined> {
-        return this.retry<Location>(this.issProvider.getCurrentLocation);
+        return this.retry<Location>(this.issProvider.getCurrentLocation.bind(this.issProvider));
     }
 
     private async retry<T>(callback: () => Promise<T>): Promise<T | undefined> {

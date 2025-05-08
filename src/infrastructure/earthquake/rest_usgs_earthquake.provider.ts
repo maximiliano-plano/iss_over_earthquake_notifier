@@ -1,7 +1,7 @@
 import axios from 'axios';
 import EarthquakeProvider from '../../core/earthquake/earthquake.provider'
 import { Earthquake } from '../../core/earthquake/earthquake.interface';
-import { getEnvarOrDefault } from '../../util';
+import { getEnvarOrDefault, getEnvarOrThrow } from '../../util';
 
 interface FeatureCollection {
     features: {
@@ -51,7 +51,8 @@ export class UsgsEarthquakeProvider implements EarthquakeProvider {
                 coordinates: f.geometry.coordinates, 
                 type: 'Point'
             },
-            external_id: f.id
+            external_id: f.id,
+            notification_sent: false
         }))
     }
 
@@ -64,8 +65,8 @@ export class UsgsEarthquakeProvider implements EarthquakeProvider {
 }
 
 export default function UsgsEarthquakeProviderFactory() {
-    const baseURL = getEnvarOrDefault<string>('USGS_BASE_URL', 'https://earthquake.usgs.gov/fdsnws/event/1');
+    const baseUrl = getEnvarOrThrow<string>('USGS_BASE_URL');
     const startIntervalInHours = getEnvarOrDefault<number>('USGS_LAST_EARTHQUAKES_INTERVAL_IN_HOUR', 1);
 
-    return new UsgsEarthquakeProvider(baseURL, startIntervalInHours);
+    return new UsgsEarthquakeProvider(baseUrl, startIntervalInHours);
 };

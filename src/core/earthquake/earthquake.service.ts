@@ -19,8 +19,7 @@ export interface QueryParams {
 
 export class EarthquakeService {
     constructor(private readonly earthquakeProvider: EarthquakeProvider,
-        private readonly earthquakeRepository: EarthquakeRepository,
-        private readonly minimumAge: number) {
+        private readonly earthquakeRepository: EarthquakeRepository) {
     }
 
     /**
@@ -35,22 +34,31 @@ export class EarthquakeService {
     }
 
     /**
-     * It pulls last earthquakes from provider and stores it on the repository.
+     * It pulls last earthquakes from provider and stores them in the repository.
      */
     async fetchAndInsertEarthquakes(): Promise<void> {
-        const lastEarthquakes = await this.earthquakeProvider.fetchLastEarthquakes();
-        await Promise.all(lastEarthquakes.map(e =>
-            this.earthquakeRepository.atomicUpsert(e, { external_id: e.external_id })
-        ));
+        try {
+            const lastEarthquakes = await this.earthquakeProvider.fetchLastEarthquakes();
+            await Promise.all(lastEarthquakes.map(e =>
+                this.earthquakeRepository.atomicUpsert(e, { external_id: e.external_id })
+            ));
+        } catch(error) {
+            console.error("Failed to add new earthquakes from provider.");
+        }
+    }
+
+    /**
+     * 
+     * 
+     */
+    async saveEarthquake(earthquake: Earthquake): Promise<Earthquake> {
+        throw new Error('Method not implimented yet.');
     }
 }
 
 export default async function EarthquakeServiceFactory() {
     const usgsProvider = UsgsEarthquakeProviderFactory();
     const mongoRepository = await MongoEarthquakeRepositoryFactory();
-    const minimumAge = process.env.MINIMUM_AGE_IN_SEC
-        ? parseInt(process.env.MINIMUM_AGE_IN_SEC)
-        : 5;
 
-    return new EarthquakeService(usgsProvider, mongoRepository, minimumAge);
+    return new EarthquakeService(usgsProvider, mongoRepository);
 };
