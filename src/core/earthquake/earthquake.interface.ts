@@ -7,5 +7,6 @@ export interface Earthquake {
         coordinates: number[],
         type: "Point"
     },
-    external_id: string
+    external_id: string,
+    notification_sent: boolean
 }

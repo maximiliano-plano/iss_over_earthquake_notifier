@@ -212,7 +212,8 @@ describe("MongoEarthquakeRepository", () => {
           coordinates: [-122.4194, 37.7749],
           type: "Point",
         },
-        external_id: "randomid"
+        external_id: "randomid",
+        notification_sent: false
       };
 
       await earthquakeRepository.atomicUpsert(earthquake);
@@ -232,7 +233,8 @@ describe("MongoEarthquakeRepository", () => {
           coordinates: [-122.4194, 37.7749],
           type: "Point",
         },
-        external_id: "randomid"
+        external_id: "randomid",
+        notification_sent: false
       };
       const { _id } = await earthquakeRepository.atomicUpsert(earthquake);
       await earthquakeRepository.atomicUpsert(earthquake, { _id });
@@ -251,7 +253,8 @@ describe("MongoEarthquakeRepository", () => {
           coordinates: [-122.4194, 37.7749],
           type: "Point",
         },
-        external_id: "randomid1"
+        external_id: "randomid1",
+        notification_sent: false
       };
       const storedEarthquake = await earthquakeRepository.atomicUpsert(earthquake, { external_id: earthquake.external_id });
       expect(storedEarthquake).toBeDefined;

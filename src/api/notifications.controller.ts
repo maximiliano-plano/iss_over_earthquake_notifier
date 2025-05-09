@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { notificationService } from '../core/notification.service';
+import { notificationService } from '../core/notification/notification.service';
 const NotificationService = notificationService();
 
 export const storeWebhook = async (req:Request, res:Response, next: NextFunction): Promise<void> => {

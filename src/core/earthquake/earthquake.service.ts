@@ -19,8 +19,7 @@ export interface QueryParams {
 
 export class EarthquakeService {
     constructor(private readonly earthquakeProvider: EarthquakeProvider,
-        private readonly earthquakeRepository: EarthquakeRepository,
-        private readonly minimumAge: number) {
+        private readonly earthquakeRepository: EarthquakeRepository) {
     }
 
     /**
@@ -43,14 +42,19 @@ export class EarthquakeService {
             this.earthquakeRepository.atomicUpsert(e, { external_id: e.external_id })
         ));
     }
+
+    /**
+     * 
+     * 
+     */
+    async saveEarthquake(earthquake: Earthquake): Promise<Earthquake> {
+        throw new Error('Method not implimented yet.');
+    }
 }
 
 export default async function EarthquakeServiceFactory() {
     const usgsProvider = UsgsEarthquakeProviderFactory();
     const mongoRepository = await MongoEarthquakeRepositoryFactory();
-    const minimumAge = process.env.MINIMUM_AGE_IN_SEC
-        ? parseInt(process.env.MINIMUM_AGE_IN_SEC)
-        : 5;
 
-    return new EarthquakeService(usgsProvider, mongoRepository, minimumAge);
+    return new EarthquakeService(usgsProvider, mongoRepository);
 };

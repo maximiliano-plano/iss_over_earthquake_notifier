@@ -29,7 +29,7 @@ describe('EarthquakeService', () => {
         earthquakeCollection = connection.collection("earthquakes");
         await earthquakeCollection.deleteMany();
 
-        earthquakeService = new EarthquakeService(MockUsgsEarthquakeProvider, mongoEarthquakeRepository, 1);
+        earthquakeService = new EarthquakeService(MockUsgsEarthquakeProvider, mongoEarthquakeRepository);
     });
 
     afterAll(async () => {
