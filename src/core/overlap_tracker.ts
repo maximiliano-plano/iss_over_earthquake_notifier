@@ -32,7 +32,7 @@ export class OverlapTracker {
       });
 
       await Promise.all(earthquakes.map(async (earthquake) => {
-        await this.notificationService.notifyEarthquake(earthquake);
+        await this.notificationService.notifyOverlap(earthquake);
         console.log('Notification sent!');
       }));
     }

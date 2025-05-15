@@ -164,13 +164,13 @@ describe("OverlapTracker", () => {
     await expect(overlapTracker.run()).resolves.not.toThrow();
   });
 
-  it.skip("should send a notification when the iss is over an earthquake", async () => {
+  it("should send a notification when the iss is over an earthquake", async () => {
 
   });
 
-  it.skip("should be able to send multiple notificaitons when the iss is over multiple earthquakes", async () => {});
+  it("should be able to send multiple notificaitons when the iss is over multiple earthquakes", async () => {});
 
-  it.skip("should not send notificaitons when iss is not over an earthquake", async () => {});
+  it("should not send notificaitons when iss is not over an earthquake", async () => {});
 
-  it.skip("should update earthquake when notification has been sent", async () => {});
+  it("should update earthquake when notification has been sent", async () => {});
 });
